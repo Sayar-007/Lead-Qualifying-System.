@@ -6,6 +6,7 @@ interface Listing {
   baths: number;
   sqft: string;
   tag: string;
+  image: string;
 }
 
 const listings: Listing[] = [
@@ -17,6 +18,7 @@ const listings: Listing[] = [
     baths: 3,
     sqft: "3,180",
     tag: "New listing",
+    image: "/images/listing-1.jpg",
   },
   {
     address: "412 Barton Creek Ln",
@@ -26,6 +28,7 @@ const listings: Listing[] = [
     baths: 2,
     sqft: "2,410",
     tag: "Open house Sat",
+    image: "/images/listing-2.jpg",
   },
   {
     address: "27 Mirador Court",
@@ -35,6 +38,7 @@ const listings: Listing[] = [
     baths: 4,
     sqft: "4,620",
     tag: "Lake view",
+    image: "/images/listing-3.jpg",
   },
 ];
 
@@ -57,8 +61,14 @@ export default function FeaturedListings() {
               key={l.address}
               className="group overflow-hidden rounded-card border border-ink/10 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
             >
-              <div className="flex h-40 items-center justify-center bg-stone">
-                <span className="rounded-full bg-ink/90 px-3 py-1 font-mono text-[11px] text-paper">
+              <div className="relative h-44 w-full overflow-hidden bg-stone">
+                <img
+                  src={l.image}
+                  alt={`${l.address}, ${l.area}`}
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <span className="absolute left-3 top-3 rounded-full bg-ink/90 px-3 py-1 font-mono text-[11px] text-paper">
                   {l.tag}
                 </span>
               </div>
