@@ -1,35 +1,23 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Newsreader, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const display = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display",
-});
-
-const body = Newsreader({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  style: ["normal", "italic"],
-  variable: "--font-body",
-});
-
-const mono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-mono",
-});
-
 export const metadata: Metadata = {
-  title: "Anders & Vale | Austin Hill Country Real Estate",
-  description: "Homes with a sense of place, across the Texas hill country.",
+  title: "Anders & Vale | Premium Real Estate in Austin, TX",
+  description: "Bespoke real estate services tailored to your timeline.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
-      <body className="font-body">{children}</body>
+    <html lang="en" className="scroll-smooth">
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600&family=Inter:wght@400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="bg-surface text-on-surface font-body-md antialiased relative selection:bg-secondary-fixed selection:text-on-secondary-fixed-variant">
+        {children}
+      </body>
     </html>
   );
 }

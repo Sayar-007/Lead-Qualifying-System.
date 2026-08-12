@@ -1,22 +1,59 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
 export default function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-paper/10 bg-ink/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <p className="font-display text-lg font-semibold tracking-tight text-paper">
-          Anders <span className="text-brass-light">&amp;</span> Vale
-        </p>
-        <nav className="hidden gap-8 font-body text-[15px] text-paper/80 sm:flex">
-          <a href="#listings" className="transition hover:text-paper">Listings</a>
-          <a href="#why" className="transition hover:text-paper">Why us</a>
-          <a href="#contact" className="transition hover:text-paper">Contact</a>
-        </nav>
+    <nav
+      className={`fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop py-unit max-w-container-max mx-auto transition-colors duration-300 ${
+        scrolled ? "nav-scrolled" : "bg-transparent"
+      }`}
+      id="main-nav"
+    >
+      <div className="font-display-lg text-headline-md text-on-primary dark:text-primary-fixed">
+        Anders &amp; Vale
+      </div>
+      <div className="hidden md:flex space-x-gutter">
         <a
-          href="#contact"
-          className="rounded-full bg-brass px-4 py-2 font-display text-sm font-medium text-ink transition hover:bg-brass-light"
+          className="font-label-caps text-label-caps text-on-primary-fixed-variant border-b-2 border-on-primary-fixed-variant pb-1 hover:bg-primary-container/50 transition-all opacity-80 scale-95"
+          href="#listings"
         >
-          Book a viewing
+          Listings
+        </a>
+        <a
+          className="font-label-caps text-label-caps text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-all"
+          href="#why"
+        >
+          Services
+        </a>
+        <a
+          className="font-label-caps text-label-caps text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-all"
+          href="#"
+        >
+          About
+        </a>
+        <a
+          className="font-label-caps text-label-caps text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-all"
+          href="#contact"
+        >
+          Contact
         </a>
       </div>
-    </header>
+      <div>
+        <button className="bg-secondary text-on-secondary px-6 py-3 rounded-full font-label-caps text-label-caps hover:bg-on-secondary-fixed-variant transition-colors">
+          Client Login
+        </button>
+      </div>
+    </nav>
   );
 }

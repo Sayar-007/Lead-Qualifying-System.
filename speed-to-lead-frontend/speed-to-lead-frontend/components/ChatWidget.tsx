@@ -94,131 +94,113 @@ export default function ChatWidget() {
 
   if (phase === "closed") {
     return (
-      <button
-        onClick={() => setPhase("intro")}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-ink px-5 py-3.5 text-paper shadow-xl transition hover:bg-ink-2"
-        aria-label="Open chat with Anders & Vale"
-      >
-        <span className="h-2 w-2 rounded-full bg-brass-light animate-pulse-dot" />
-        <span className="font-display text-sm font-medium">Ask Anders &amp; Vale</span>
-      </button>
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <button
+          onClick={() => setPhase("intro")}
+          className="bg-secondary text-on-secondary w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-200"
+          aria-label="Open chat"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: "28px" }}>chat_bubble</span>
+        </button>
+      </div>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex h-[560px] w-[360px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-card border border-ink/10 bg-paper shadow-2xl">
-      {/* header */}
-      <div className="flex items-center justify-between bg-ink px-4 py-3.5">
-        <div>
-          <p className="font-display text-sm font-semibold text-paper">Anders &amp; Vale</p>
-          <p className="font-mono text-[11px] text-brass-light">usually replies instantly</p>
-        </div>
-        <button
-          onClick={() => setPhase("closed")}
-          className="text-paper/70 transition hover:text-paper"
-          aria-label="Close chat"
-        >
-          ✕
-        </button>
-      </div>
-
-      {phase === "intro" && (
-        <form onSubmit={handleIntroSubmit} className="flex flex-1 flex-col justify-center gap-3 px-5">
-          <p className="font-body text-[15px] leading-snug text-ink-text">
-            Hi! Before we dive in — who am I speaking with?
-          </p>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-            className="rounded-lg border border-ink/15 bg-white px-3 py-2 font-body text-sm outline-none focus-visible:border-brass"
-            required
-          />
-          <input
-            value={contact}
-            onChange={(e) => setContact(e.target.value)}
-            placeholder="Email or phone"
-            className="rounded-lg border border-ink/15 bg-white px-3 py-2 font-body text-sm outline-none focus-visible:border-brass"
-            required
-          />
-          <button
-            type="submit"
-            className="rounded-lg bg-brass py-2.5 font-display text-sm font-medium text-ink transition hover:bg-brass-light"
-          >
-            Start chatting
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+      <div className="w-80 bg-surface/80 backdrop-blur-[12px] border border-outline-variant rounded-xl shadow-[0px_4px_20px_rgba(6,78,59,0.08)] mb-4 overflow-hidden transform origin-bottom-right transition-all duration-300">
+        <div className="bg-primary p-4 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-secondary rounded-full animate-pulse"></div>
+            <span className="font-label-caps text-label-caps text-on-primary">Concierge</span>
+          </div>
+          <button onClick={() => setPhase("closed")} className="text-on-primary hover:text-secondary-fixed transition-colors" aria-label="Close chat">
+            <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>close</span>
           </button>
-          {error && <p className="font-mono text-xs text-ember">{error}</p>}
-        </form>
-      )}
+        </div>
 
-      {phase === "chatting" && (
-        <>
-          <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
-            {messages.map((m, i) => (
-              <div key={i} className={m.role === "lead" ? "flex justify-end" : "flex justify-start"}>
-                <div
-                  className={
-                    m.role === "lead"
-                      ? "max-w-[80%] rounded-2xl rounded-br-sm bg-ink px-3.5 py-2 font-body text-[14px] text-paper"
-                      : "max-w-[80%] rounded-2xl rounded-bl-sm bg-stone px-3.5 py-2 font-body text-[14px] text-ink-text"
-                  }
-                >
-                  <p>{m.content}</p>
+        {phase === "intro" && (
+          <form onSubmit={handleIntroSubmit} className="p-4 flex flex-col gap-3 bg-surface-bright/50">
+            <p className="font-body-md text-sm text-on-surface">Hi! Before we dive in — who am I speaking with?</p>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              className="w-full rounded-md border border-surface-variant bg-surface px-3 py-2 font-body-md text-sm text-on-surface outline-none focus:border-primary"
+              required
+            />
+            <input
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              placeholder="Email or phone"
+              className="w-full rounded-md border border-surface-variant bg-surface px-3 py-2 font-body-md text-sm text-on-surface outline-none focus:border-primary"
+              required
+            />
+            <button type="submit" className="w-full rounded-md bg-secondary py-2 font-label-caps text-label-caps text-on-secondary transition hover:bg-on-secondary-fixed-variant">
+              Start chatting
+            </button>
+            {error && <p className="text-xs text-error">{error}</p>}
+          </form>
+        )}
+
+        {phase === "chatting" && (
+          <>
+            <div ref={scrollRef} className="h-64 p-4 overflow-y-auto flex flex-col space-y-4 bg-surface-bright/50">
+              {messages.map((m, i) => (
+                <div key={i} className={`flex flex-col ${m.role === "lead" ? "items-end" : "items-start"}`}>
+                  <div className={`py-2 px-3 rounded-lg max-w-[85%] border shadow-sm ${m.role === "lead" ? "bg-primary text-on-primary rounded-tr-none border-primary" : "bg-surface-container text-on-surface rounded-tl-none border-surface-variant"}`}>
+                    <p className="font-body-md text-sm">{m.content}</p>
+                  </div>
                   {m.role === "agent" && m.responseSeconds > 0 && (
-                    <p className="mt-1 font-mono text-[10px] text-muted">
-                      responded in {m.responseSeconds.toFixed(1)}s
-                    </p>
+                    <div className="mt-1 flex items-center space-x-1">
+                      <span className="material-symbols-outlined text-[10px] text-secondary">bolt</span>
+                      <span className="font-label-caps text-[10px] text-secondary tracking-widest">responded in {m.responseSeconds.toFixed(1)}s</span>
+                    </div>
                   )}
                 </div>
-              </div>
-            ))}
-
-            {waiting && (
-              <div className="flex justify-start">
-                <div className="rounded-2xl rounded-bl-sm bg-stone px-3.5 py-2">
-                  <p className="font-mono text-[11px] text-muted">{elapsed.toFixed(1)}s…</p>
+              ))}
+              
+              {waiting && (
+                <div className="flex flex-col items-start">
+                  <div className="bg-surface-container py-2 px-3 rounded-lg rounded-tl-none max-w-[85%] border border-surface-variant shadow-sm">
+                    <p className="font-body-md text-sm text-on-surface-variant animate-pulse">{elapsed.toFixed(1)}s...</p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {outcome && (
-              <div className="rounded-xl border border-brass/40 bg-brass/10 px-3.5 py-3">
-                <p className="font-display text-[13px] font-semibold text-ink-text">
-                  {outcome.booked ? "You're on the calendar" : "Thanks for the details"}
-                </p>
-                <p className="mt-1 font-body text-[13px] text-muted">
-                  {outcome.booked && outcome.slot_start
-                    ? new Date(outcome.slot_start).toLocaleString(undefined, {
-                        weekday: "short",
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })
-                    : "We'll follow up with matching listings shortly."}
-                </p>
-              </div>
-            )}
-          </div>
+              {outcome && (
+                <div className="rounded-lg border border-secondary/40 bg-secondary/10 px-3 py-2 mt-2 text-center">
+                  <p className="font-label-caps text-secondary text-xs">
+                    {outcome.booked ? "Appointment Booked" : "Details Received"}
+                  </p>
+                </div>
+              )}
+            </div>
 
-          <form onSubmit={handleSend} className="flex gap-2 border-t border-ink/10 px-3 py-3">
-            <input
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder="Type a message…"
-              className="flex-1 rounded-full border border-ink/15 bg-white px-4 py-2 font-body text-sm outline-none focus-visible:border-brass"
-            />
-            <button
-              type="submit"
-              disabled={waiting}
-              className="rounded-full bg-ink px-4 py-2 font-display text-sm text-paper transition disabled:opacity-40"
-            >
-              Send
-            </button>
-          </form>
-          {error && <p className="px-4 pb-2 font-mono text-xs text-ember">{error}</p>}
-        </>
-      )}
+            <form onSubmit={handleSend} className="p-3 bg-surface border-t border-outline-variant">
+              <div className="flex items-center bg-surface-container-low rounded-full px-3 py-2 border border-surface-variant focus-within:border-primary">
+                <input
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder="Type a message..."
+                  className="bg-transparent border-none focus:ring-0 font-body-md text-sm text-on-surface w-full p-0 outline-none"
+                />
+                <button type="submit" disabled={waiting} className="text-primary hover:text-secondary ml-2 transition-colors disabled:opacity-50">
+                  <span className="material-symbols-outlined" style={{ fontSize: "20px", fontVariationSettings: "'FILL' 1" }}>send</span>
+                </button>
+              </div>
+              {error && <p className="px-3 pt-2 text-xs text-error">{error}</p>}
+            </form>
+          </>
+        )}
+      </div>
+      
+      <button
+        onClick={() => setPhase("closed")}
+        className="bg-secondary text-on-secondary w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-200"
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: "28px" }}>expand_more</span>
+      </button>
     </div>
   );
 }

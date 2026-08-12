@@ -1,48 +1,28 @@
-import Image from "next/image";
-
 export default function Hero() {
   return (
-    <section className="bg-ink">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 py-20 md:grid-cols-2 md:py-28">
-        <div className="animate-fade-up">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-brass-light">
-            Austin &amp; the Hill Country
-          </p>
-          <h1 className="mt-4 font-display text-[2.75rem] font-semibold leading-[1.05] tracking-tight text-paper md:text-6xl">
-            Homes with a
-            <br />
-            sense of <span className="italic font-body font-normal text-brass-light">place.</span>
-          </h1>
-          <p className="mt-6 max-w-md font-body text-lg leading-relaxed text-paper/75">
-            We know every ridge, creek lot, and cul-de-sac from Westlake to Dripping
-            Springs — so you don&apos;t have to guess where you&apos;ll actually want to live.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <a
-              href="#listings"
-              className="rounded-full bg-brass px-6 py-3 font-display text-sm font-medium text-ink transition hover:bg-brass-light"
-            >
-              View current listings
-            </a>
-            <a href="#contact" className="font-body text-sm text-paper/70 underline underline-offset-4 transition hover:text-paper">
-              Talk to an agent
-            </a>
-          </div>
-        </div>
-
-        <div className="relative aspect-[4/3] overflow-hidden rounded-card">
-          <Image
-            src="/images/hero-house.jpg"
-            alt="Modern hill-country home at dusk"
-            fill
-            priority
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
-        </div>
+    <header className="relative h-screen min-h-[700px] flex items-center justify-center pt-20">
+      <div className="absolute inset-0 z-0">
+        <div
+          className="bg-cover bg-center w-full h-full"
+          style={{
+            backgroundImage:
+              "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDLhKYof2JwbkKAQR7i6hZH70LXnFc_T5sS9M6miwGLiETLPGnndOI795hSY9Cg1bBtdPzz9l91ky9A5Sf8AN5DsFD4sEmt0LABxjJ6yCBKcRPQle2l9OI8CG3iBqZvBewRwWyKJRMZ_joTqNA4aPvE_w9eeizS7S2Z0SspNqKjAsl1Okrwj424yIMGXeysmBirGgu_rIAL2bu70DhEVUvn9S1kEwY4GJQH_IhX0y1kEMBElA1QW9u9')",
+          }}
+        ></div>
+        <div className="absolute inset-0 hero-overlay"></div>
       </div>
-    </section>
+      <div className="relative z-10 text-center px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+        <h1 className="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-primary mb-6 max-w-4xl mx-auto leading-tight">
+          Defining the New Standard of Austin Living.
+        </h1>
+        <p className="font-body-lg text-body-lg text-on-primary-container max-w-2xl mx-auto mb-10">
+          Bespoke real estate services tailored to your timeline.
+        </p>
+        <button className="bg-surface text-primary px-8 py-4 rounded-full font-label-caps text-label-caps hover:bg-surface-container-high transition-colors tracking-widest uppercase">
+          Explore Properties
+        </button>
+      </div>
+    </header>
   );
 }
 
