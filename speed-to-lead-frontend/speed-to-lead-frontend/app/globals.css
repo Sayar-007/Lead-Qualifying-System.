@@ -35,3 +35,18 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+.font-display { font-family: 'Playfair Display', serif; }
+.font-label-caps { 
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Custom scrollbar for chat */
+#chat-messages::-webkit-scrollbar { width: 4px; }
+#chat-messages::-webkit-scrollbar-track { background: transparent; }
+#chat-messages::-webkit-scrollbar-thumb { 
+    background: #e5e7eb; 
+    border-radius: 10px;
+}
