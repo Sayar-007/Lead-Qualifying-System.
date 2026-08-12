@@ -75,7 +75,7 @@ export default function Nav() {
       <div>
         {user ? (
           <div className="flex items-center space-x-4">
-            <span className="text-on-primary font-body-md text-sm hidden sm:inline-block">
+            <span className="text-on-primary font-body-md text-sm">
               Hi, {user.user_metadata.full_name || user.email?.split("@")[0]}
             </span>
             <button

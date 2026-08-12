@@ -29,7 +29,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         });
         if (signInError) throw signInError;
       } else {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -39,6 +39,12 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
           },
         });
         if (signUpError) throw signUpError;
+        
+        if (!data.session) {
+          setError("Please check your email to confirm your account.");
+          setLoading(false);
+          return; // Do not close modal so user sees the message
+        }
       }
       onSuccess?.();
       onClose();
