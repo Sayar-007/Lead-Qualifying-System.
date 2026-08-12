@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createLead, sendChatMessage, type ChatTurnOutcome } from "@/lib/api";
+import { supabase } from "@/lib/supabaseClient";
+import type { User } from "@supabase/supabase-js";
+import AuthModal from "./AuthModal";
 
 interface AgentMessage {
   role: "agent";
@@ -27,6 +30,8 @@ export default function ChatWidget() {
   const [elapsed, setElapsed] = useState(0);
   const [outcome, setOutcome] = useState<ChatTurnOutcome | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [showAuth, setShowAuth] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startRef = useRef<number>(0);
@@ -35,6 +40,23 @@ export default function ChatWidget() {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, waiting]);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user && phase === "intro") {
+        setShowAuth(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [phase]);
 
   function startTimer() {
     startRef.current = performance.now();
@@ -49,18 +71,20 @@ export default function ChatWidget() {
     return (performance.now() - startRef.current) / 1000;
   }
 
-  async function handleIntroSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!name.trim() || !contact.trim()) return;
+  async function handleStartAuthenticatedChat() {
+    if (!user) return;
     setError(null);
     try {
-      const res = await createLead({ name, contact, source: "web_form" });
+      const uName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Friend";
+      const uContact = user.email || "Unknown";
+      
+      const res = await createLead({ name: uName, contact: uContact, source: "web_form" });
       setLeadId(res.lead_id);
       setPhase("chatting");
       setMessages([
         {
           role: "agent",
-          content: `Thanks ${name.split(" ")[0]}! Tell me a bit about the home you're after — area, budget, timeline — and I'll get you sorted quickly.`,
+          content: `Thanks ${uName.split(" ")[0]}! Tell me a bit about the home you're after — area, budget, timeline — and I'll get you sorted quickly.`,
           responseSeconds: 0,
         },
       ]);
@@ -120,27 +144,32 @@ export default function ChatWidget() {
         </div>
 
         {phase === "intro" && (
-          <form onSubmit={handleIntroSubmit} className="p-4 flex flex-col gap-3 bg-surface-bright/50">
-            <p className="font-body-md text-sm text-on-surface">Hi! Before we dive in — who am I speaking with?</p>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
-              className="w-full rounded-md border border-surface-variant bg-surface px-3 py-2 font-body-md text-sm text-on-surface outline-none focus:border-primary"
-              required
-            />
-            <input
-              value={contact}
-              onChange={(e) => setContact(e.target.value)}
-              placeholder="Email or phone"
-              className="w-full rounded-md border border-surface-variant bg-surface px-3 py-2 font-body-md text-sm text-on-surface outline-none focus:border-primary"
-              required
-            />
-            <button type="submit" className="w-full rounded-md bg-secondary py-2 font-label-caps text-label-caps text-on-secondary transition hover:bg-on-secondary-fixed-variant">
-              Start chatting
-            </button>
+          <div className="p-4 flex flex-col gap-3 bg-surface-bright/50">
+            {user ? (
+              <>
+                <p className="font-body-md text-sm text-on-surface">
+                  Hi {user.user_metadata?.full_name || user.email?.split("@")[0]}! Ready to chat?
+                </p>
+                <button 
+                  onClick={handleStartAuthenticatedChat} 
+                  className="w-full rounded-md bg-secondary py-2 font-label-caps text-label-caps text-on-secondary transition hover:bg-on-secondary-fixed-variant"
+                >
+                  Start chatting
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="font-body-md text-sm text-on-surface">Please log in to chat with our agent.</p>
+                <button 
+                  onClick={() => setShowAuth(true)} 
+                  className="w-full rounded-md bg-secondary py-2 font-label-caps text-label-caps text-on-secondary transition hover:bg-on-secondary-fixed-variant"
+                >
+                  Log in / Sign up
+                </button>
+              </>
+            )}
             {error && <p className="text-xs text-error">{error}</p>}
-          </form>
+          </div>
         )}
 
         {phase === "chatting" && (
@@ -201,6 +230,8 @@ export default function ChatWidget() {
       >
         <span className="material-symbols-outlined" style={{ fontSize: "28px" }}>expand_more</span>
       </button>
+
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </div>
   );
 }

@@ -31,3 +31,26 @@ create table if not exists bookings (
 
 -- Enable realtime on leads so the admin dashboard can subscribe to new rows.
 alter publication supabase_realtime add table leads;
+
+-- Create users table (public profile linked to auth.users)
+create table if not exists users (
+    id uuid references auth.users not null primary key,
+    name text,
+    email text,
+    created_at timestamptz default now()
+);
+
+-- Trigger to automatically create a public user profile on signup
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.users (id, email, name)
+  values (new.id, new.email, new.raw_user_meta_data->>'full_name');
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- Trigger for auth.users
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();

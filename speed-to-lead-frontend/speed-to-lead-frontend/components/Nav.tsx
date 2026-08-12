@@ -1,9 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import AuthModal from "./AuthModal";
+import { supabase } from "@/lib/supabaseClient";
+import type { User } from "@supabase/supabase-js";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -12,6 +17,24 @@ export default function Nav() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+  }
 
   return (
     <nav
@@ -50,10 +73,29 @@ export default function Nav() {
         </a>
       </div>
       <div>
-        <button className="bg-secondary text-on-secondary px-6 py-3 rounded-full font-label-caps text-label-caps hover:bg-on-secondary-fixed-variant transition-colors">
-          Client Login
-        </button>
+        {user ? (
+          <div className="flex items-center space-x-4">
+            <span className="text-on-primary font-body-md text-sm hidden sm:inline-block">
+              Hi, {user.user_metadata.full_name || user.email?.split("@")[0]}
+            </span>
+            <button
+              onClick={handleLogout}
+              className="bg-transparent border border-secondary text-secondary px-6 py-3 rounded-full font-label-caps text-label-caps hover:bg-secondary/10 transition-colors"
+            >
+              Log Out
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowAuth(true)}
+            className="bg-secondary text-on-secondary px-6 py-3 rounded-full font-label-caps text-label-caps hover:bg-on-secondary-fixed-variant transition-colors"
+          >
+            Client Login
+          </button>
+        )}
       </div>
+
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </nav>
   );
 }
